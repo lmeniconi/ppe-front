@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { AnimatePresence, motion } from "framer-motion"
 import { AlertCircle, ChevronRight, Upload } from "lucide-react"
-import { FormEvent, useEffect, useRef, useState } from "react"
+import { FormEvent, useEffect, useState } from "react"
 import { toast } from "sonner"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL!
