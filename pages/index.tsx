@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { AnimatePresence, motion } from "framer-motion"
 import { AlertCircle, ChevronRight, Upload } from "lucide-react"
+import { useRouter } from "next/router"
 import { FormEvent, useEffect, useState } from "react"
 import { toast } from "sonner"
 
@@ -29,6 +30,9 @@ type Event = {
 }
 
 export default function Page() {
+  const router = useRouter()
+  const filename = router.query.filename as string | undefined
+
   // upload file
   const [uploadApiFile, setUploadApiFile] = useState<File | null>(null)
   const [submitting, setSubmitting] = useState(false)
@@ -68,6 +72,29 @@ export default function Page() {
   // selected video
   const [selectedVideo, setSelectedVideo] = useState<ApiFile | null>()
 
+  useEffect(() => {
+    if (!selectedVideo) {
+      return
+    }
+
+    router.push({
+      query: {
+        filename: selectedVideo.filename,
+      },
+    })
+  }, [selectedVideo])
+
+  useEffect(() => {
+    if (!filename || !!selectedVideo) {
+      return
+    }
+
+    setSelectedVideo({
+      id: "1",
+      filename: filename,
+    })
+  }, [filename])
+
   // events
   const [events, setEvents] = useState<Event[]>([])
   useEffect(() => {
@@ -76,7 +103,9 @@ export default function Page() {
     }
 
     const socket = new WebSocket(
-      `${API_URL.replace("http://", "ws://")}/videos/${selectedVideo.filename}/inference/detections/ws`,
+      `${API_URL.replace("http://", "ws://")}/videos/${
+        selectedVideo.filename
+      }/inference/detections/ws`
     )
 
     socket.onopen = () => {
